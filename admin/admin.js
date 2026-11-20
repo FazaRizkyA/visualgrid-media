@@ -23,7 +23,11 @@
     return;
   }
 
-  const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY);
+  // storageKey sendiri: situs lain di domain fazarizkya.github.io yang memakai proyek
+  // Supabase yang sama (KARYAFRAME) tidak berbagi sesi login dengan admin ini.
+  const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY, {
+    auth: { storageKey: "visualgrid-admin-auth" }
+  });
 
   /* ------------------------------------------------------------------------
      PILIHAN-PILIHAN FORMULIR
