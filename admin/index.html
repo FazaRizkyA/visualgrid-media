@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin — VisualGrid Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <!-- ============ LOGIN ============ -->
+  <main id="loginView" class="login" hidden>
+    <form id="loginForm" class="card login__card">
+      <p class="eyebrow">VISUALGRID.MEDIA</p>
+      <h1>Masuk Admin</h1>
+      <label class="field">
+        <span>Email</span>
+        <input type="email" id="loginEmail" autocomplete="username" required />
+      </label>
+      <label class="field">
+        <span>Kata sandi</span>
+        <input type="password" id="loginPassword" autocomplete="current-password" required />
+      </label>
+      <p id="loginError" class="error" role="alert" hidden></p>
+      <button type="submit" class="btn btn--primary btn--full" id="loginBtn">Masuk</button>
+      <a class="muted small" href="../">← Kembali ke situs</a>
+    </form>
+  </main>
+
+  <!-- ============ BELUM DIKONFIGURASI ============ -->
+  <main id="setupView" class="login" hidden>
+    <div class="card login__card">
+      <p class="eyebrow">VISUALGRID.MEDIA</p>
+      <h1>Supabase belum diatur</h1>
+      <p class="muted">Isi <code>SUPABASE_URL</code> dan <code>SUPABASE_KEY</code> di <code>js/config.js</code>, lalu muat ulang halaman ini. Langkah lengkapnya ada di README.</p>
+    </div>
+  </main>
+
+  <!-- ============ DASBOR ============ -->
+  <div id="appView" hidden>
+    <header class="topbar">
+      <div class="topbar__brand">
+        <strong>VISUALGRID</strong><span class="brand-hl">.MEDIA</span> <span class="muted">Admin</span>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Bagian admin">
+        <button type="button" role="tab" class="tab" data-tab="orders" aria-selected="true">Pesanan <span class="pill" id="newOrderCount" hidden></span></button>
+        <button type="button" role="tab" class="tab" data-tab="vg_services" aria-selected="false">Layanan</button>
+        <button type="button" role="tab" class="tab" data-tab="vg_portfolio" aria-selected="false">Portofolio</button>
+        <button type="button" role="tab" class="tab" data-tab="vg_pricing" aria-selected="false">Paket Harga</button>
+        <button type="button" role="tab" class="tab" data-tab="vg_faqs" aria-selected="false">FAQ</button>
+        <button type="button" role="tab" class="tab" data-tab="settings" aria-selected="false">Pengaturan</button>
+      </nav>
+      <div class="topbar__actions">
+        <a class="btn btn--ghost btn--sm" href="../" target="_blank" rel="noopener">Lihat situs ↗</a>
+        <span class="muted small" id="userEmail"></span>
+        <button type="button" class="btn btn--ghost btn--sm" id="logoutBtn">Keluar</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section id="panel" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <!-- ============ FORM EDIT ============ -->
+  <dialog id="editDialog" class="dialog">
+    <form id="editForm" method="dialog">
+      <header class="dialog__head">
+        <h2 id="editTitle">Edit</h2>
+        <button type="button" class="icon-btn" id="editClose" aria-label="Tutup">✕</button>
+      </header>
+      <div class="dialog__body" id="editFields"></div>
+      <p id="editError" class="error" role="alert" hidden></p>
+      <footer class="dialog__foot">
+        <button type="button" class="btn btn--ghost" id="editCancel">Batal</button>
+        <button type="submit" class="btn btn--primary" id="editSave">Simpan</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/icons.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

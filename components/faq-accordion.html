@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Komponen: FAQ Accordion Pure CSS (VisualGrid Media)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME
+       Fungsi: Token visual untuk accordion FAQ tanpa ketergantungan JavaScript.
+       ========================================================================== */
+    :root {
+      --faq-bg: #0a0d14;
+      --faq-surface: #111624;
+      --faq-primary: #3b82f6;
+      --faq-cyan: #06b6d4;
+      --faq-text: #f8fafc;
+      --faq-muted: #94a3b8;
+      --faq-border: rgba(255, 255, 255, 0.08);
+      --font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background-color: var(--faq-bg); color: var(--faq-text); padding: 60px 20px; }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .faq-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--faq-cyan);
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    .faq-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .faq-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* --------------------------------------------------------------------------
+       STYLING PURE CSS ACCORDION DENGAN <details> & <summary>
+       Fungsi: Membuka dan menutup jawaban secara alami didukung browser
+       tanpa memerlukan library JavaScript eksternal.
+       -------------------------------------------------------------------------- */
+    .faq-item {
+      background: var(--faq-surface);
+      border: 1px solid var(--faq-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.25s ease;
+    }
+
+    .faq-item[open] {
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .faq-summary {
+      padding: 20px 24px;
+      cursor: pointer;
+      font-size: 1.0625rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      list-style: none; /* Menghilangkan panah default browser */
+      user-select: none;
+    }
+
+    .faq-summary::-webkit-details-marker {
+      display: none; /* Chrome & Safari marker reset */
+    }
+
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--faq-cyan);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .faq-item[open] .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-content {
+      padding: 0 24px 20px 24px;
+      font-size: 0.9375rem;
+      color: var(--faq-muted);
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       SECTION FAQ ACCORDION (PURE CSS NO-JS)
+       Fungsi: Menyediakan tanya jawab seputar durasi kerja, revisi, dan hak cipta.
+       ========================================================================== -->
+  <section class="faq-container">
+    <div class="faq-header">
+      <span class="faq-badge">Pertanyaan Umum</span>
+      <h2 class="faq-title">Pusat Informasi & Bantuan</h2>
+    </div>
+
+    <div class="faq-wrapper">
+      <!-- FAQ 1 -->
+      <details class="faq-item" open>
+        <summary class="faq-summary">
+          <span>Berapa lama rata-rata durasi pengerjaan setiap proyek?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </summary>
+        <div class="faq-content">
+          Untuk layanan standar seperti Desain CV ATS atau Edit 1 Video Reels, draft pertama selesai dalam 24-48 jam. Paket Instagram Feed terpadu (9/12 grid) dan Video Iklan Produk membutuhkan waktu 3-5 hari kerja. Layanan kilat (Express 24 Jam) juga tersedia dengan biaya tambahan.
+        </div>
+      </details>
+
+      <!-- FAQ 2 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span>Bagaimana kebijakan garansi dan batasan revisi?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </summary>
+        <div class="faq-content">
+          Semua paket menyertakan jaminan revisi minor (perubahan warna, font teks, penyesuaian copywriting, atau pemotongan durasi video). Kami selalu meminta brief terperinci di awal agar hasil tahap pertama sudah mendekati 90% ekspektasi Anda.
+        </div>
+      </details>
+
+      <!-- FAQ 3 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span>Apakah saya akan mendapatkan file mentahan (source files)?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </summary>
+        <div class="faq-content">
+          Ya, untuk paket Pro Creator dan Brand Studio, seluruh file sumber mentahan (seperti file Figma, Adobe Photoshop PSD, Premiere Pro Project, atau dokumen Word/Canva untuk CV) akan dikirimkan kepada Anda secara lengkap.
+        </div>
+      </details>
+
+      <!-- FAQ 4 -->
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span>Bagaimana sistem pembayaran yang berlaku?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </summary>
+        <div class="faq-content">
+          Kami menerapkan skema DP 50% di awal setelah kesepakatan brief, dan pelunasan 50% sisanya setelah draft final disetujui sebelum pengiriman link download master file 4K/vektor resolusi penuh.
+        </div>
+      </details>
+    </div>
+  </section>
+
+</body>
+</html>

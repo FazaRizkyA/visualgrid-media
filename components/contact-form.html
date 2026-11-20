@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Komponen: Contact & Direct WhatsApp Form (VisualGrid Media)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME
+       Fungsi: Token visual untuk form pemesanan langsung ke WhatsApp.
+       ========================================================================== */
+    :root {
+      --form-bg: #0a0d14;
+      --form-surface: #111624;
+      --form-elevated: #182032;
+      --form-primary: #3b82f6;
+      --form-cyan: #06b6d4;
+      --form-text: #f8fafc;
+      --form-muted: #94a3b8;
+      --form-border: rgba(255, 255, 255, 0.08);
+      --font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background-color: var(--form-bg); color: var(--form-text); padding: 60px 20px; }
+
+    .contact-container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .contact-card {
+      background: var(--form-surface);
+      border: 1px solid var(--form-border);
+      border-radius: 18px;
+      padding: 36px 28px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .contact-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .contact-title {
+      font-size: 1.875rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .contact-desc {
+      font-size: 0.9375rem;
+      color: var(--form-muted);
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--form-text);
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--form-elevated);
+      border: 1px solid var(--form-border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--form-text);
+      font-size: 0.9375rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--form-primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .btn-wa {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      background: #25d366;
+      color: #0b1c10;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(37, 211, 102, 0.3);
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-wa:hover {
+      background: #20ba5a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       STRUKTUR HTML CONTACT & DIRECT WA FORM
+       Fungsi: Mengambil data kebutuhan klien dan memformat tautan pesan WhatsApp.
+       ========================================================================== -->
+  <div class="contact-container">
+    <div class="contact-card">
+      <div class="contact-header">
+        <h2 class="contact-title">Mulai Proyek Anda</h2>
+        <p class="contact-desc">Isi form di bawah untuk langsung terhubung dengan editor & desainer kami melalui WhatsApp.</p>
+      </div>
+
+      <form id="standalone-order-form">
+        <!-- Input Nama Klien -->
+        <div class="form-group">
+          <label for="name" class="form-label">Nama Lengkap / Brand *</label>
+          <input type="text" id="name" class="form-input" placeholder="Contoh: Budi Santoso / Lumina Studio" required>
+        </div>
+
+        <!-- Input Nomor WA -->
+        <div class="form-group">
+          <label for="phone" class="form-label">Nomor WhatsApp Aktif *</label>
+          <input type="tel" id="phone" class="form-input" placeholder="Contoh: 08123456789" required>
+        </div>
+
+        <!-- Pilihan Layanan -->
+        <div class="form-group">
+          <label for="service" class="form-label">Layanan yang Dibutuhkan *</label>
+          <select id="service" class="form-select" required>
+            <option value="" disabled selected>Pilih salah satu...</option>
+            <option value="Instagram Feeds Cohesive">Instagram Feeds Cohesive (9/12 Grid)</option>
+            <option value="Instagram Stories & Highlight">Instagram Stories & Highlight Cover</option>
+            <option value="Edit Video Pendek Sinematik">Edit Video Pendek Sinematik (Reels/TikTok)</option>
+            <option value="Video Iklan Produk / Ads">Video Iklan Produk Komersial (Meta/TikTok Ads)</option>
+            <option value="Dokumentasi Event & Aftermovie">Dokumentasi Event & Video Aftermovie</option>
+            <option value="Format CV / Resume ATS">Format CV / Resume ATS & Portofolio</option>
+            <option value="Kombinasi Paket Custom">Paket Kustom / Konsultasi Lainnya</option>
+          </select>
+        </div>
+
+        <!-- Catatan Kebutuhan -->
+        <div class="form-group">
+          <label for="notes" class="form-label">Catatan Singkat / Referensi</label>
+          <textarea id="notes" class="form-textarea" placeholder="Tuliskan tema, konsep, atau deadline pengerjaan yang diharapkan..."></textarea>
+        </div>
+
+        <!-- Tombol Aksi WhatsApp -->
+        <button type="submit" class="btn-wa">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.112.551 4.095 1.517 5.82l-1.517 5.596 5.748-1.507c1.662.909 3.568 1.424 5.585 1.424 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/>
+          </svg>
+          <span>Pesan Langsung via WhatsApp</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT SUBMIT HANDLER & WHATSAPP URL GENERATOR
+       Fungsi: Membaca nilai form, memvalidasi isian, dan membuka jendela chat WA.
+       ========================================================================== -->
+  <script>
+    document.getElementById('standalone-order-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const service = document.getElementById('service').value;
+      const notes = document.getElementById('notes').value.trim();
+
+      if (!name || !phone || !service) {
+        alert('Mohon isi nama, nomor telepon, dan pilihan layanan.');
+        return;
+      }
+
+      // Nomor admin tujuan
+      const WA_TARGET_NUMBER = '62895397081621';
+
+      const message = 
+`Halo Tim VisualGrid Media!
+Saya ingin order/konsultasi layanan:
+• Nama: ${name}
+• No. Kontak: ${phone}
+• Layanan: ${service}
+• Kebutuhan/Catatan: ${notes || '-'}
+
+Mohon informasi ketersediaan slot pengerjaan. Terima kasih!`;
+
+      const encoded = encodeURIComponent(message);
+      window.open(`https://wa.me/${WA_T}?text=${encoded}`, '_blank');
+    });
+  </script>
+</body>
+</html>

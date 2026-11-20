@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Komponen: Hero Section 3D (VisualGrid Media)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME TOKENS
+       Fungsi: Menentukan token warna tema obsidian gelap dan aksen cobalt/cyan.
+       ========================================================================== */
+    :root {
+      --hero-bg: #0a0d14;
+      --hero-surface: #111624;
+      --hero-primary: #3b82f6;
+      --hero-cyan: #06b6d4;
+      --hero-text: #f8fafc;
+      --hero-text-muted: #94a3b8;
+      --hero-border: rgba(255, 255, 255, 0.08);
+      --font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--hero-bg);
+      color: var(--hero-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* --------------------------------------------------------------------------
+       STYLING KOMPONEN HERO
+       Fungsi: Penataan layout hero dengan canvas 3D di latar belakang
+       dan teks penawaran nilai di bagian depan (foreground).
+       -------------------------------------------------------------------------- */
+    .hero {
+      position: relative;
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      padding: 64px 24px;
+      overflow: hidden;
+    }
+
+    .hero__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero__canvas-container {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    #hero-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .hero__content {
+      max-width: 640px;
+    }
+
+    .hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--hero-cyan);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero__title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
+    }
+
+    .hero__title-gradient {
+      background: linear-gradient(135deg, #ffffff 20%, #93c5fd 60%, var(--hero-cyan) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero__subtitle {
+      font-size: 1.0625rem;
+      color: var(--hero-text-muted);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 26px;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn--primary {
+      background: linear-gradient(135deg, var(--hero-primary) 0%, #2563eb 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn--primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6);
+    }
+
+    .btn--secondary {
+      background: var(--hero-surface);
+      color: var(--hero-text);
+      border: 1px solid var(--hero-border);
+    }
+
+    .btn--secondary:hover {
+      background: #182032;
+      transform: translateY(-2px);
+    }
+
+    .hero__metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding-top: 24px;
+      border-top: 1px solid var(--hero-border);
+    }
+
+    .hero__metric-val {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .hero__metric-lbl {
+      font-size: 0.8125rem;
+      color: var(--hero-text-muted);
+    }
+
+    /* Responsif untuk Tablet & Desktop */
+    @media (min-width: 768px) {
+      .hero__title { font-size: 3.25rem; }
+      .hero__subtitle { font-size: 1.1875rem; }
+    }
+    @media (min-width: 1024px) {
+      .hero { min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       STRUKTUR HTML HERO SECTION
+       Fungsi: Menampilkan headline, visual 3D Three.js, dan tombol aksi konversi.
+       ========================================================================== -->
+  <section class="hero">
+    <!-- Kontainer Kanvas 3D -->
+    <div class="hero__canvas-container" aria-hidden="true">
+      <canvas id="hero-canvas"></canvas>
+    </div>
+
+    <div class="hero__container">
+      <div class="hero__content">
+        <!-- Badge Kategori Layanan -->
+        <div class="hero__badge">
+          <span>Studio Visual & Desain Berdampak Tinggi</span>
+        </div>
+
+        <!-- Judul Utama (H1) -->
+        <h1 class="hero__title">
+          Visual Sinematik yang <span class="hero__title-gradient">Mengonversi Audiens.</span>
+        </h1>
+
+        <!-- Deskripsi Ringkas 6 Layanan -->
+        <p class="hero__subtitle">
+          Spesialis Instagram Feeds & Stories, Video Pendek Sinematik (Reels/TikTok), Commercial Ads, Dokumentasi Event, dan CV ATS Premium. Dibuat presisi untuk pertumbuhan brand Anda.
+        </p>
+
+        <!-- Tombol Aksi (CTA) -->
+        <div class="hero__actions">
+          <a href="#order" class="btn btn--primary">Konsultasi Sekarang &rarr;</a>
+          <a href="#portfolio" class="btn btn--secondary">Lihat Hasil Karya</a>
+        </div>
+
+        <!-- Metrik Pencapaian -->
+        <div class="hero__metrics">
+          <div>
+            <div class="hero__metric-val">350+</div>
+            <div class="hero__metric-lbl">Aset Dirilis</div>
+          </div>
+          <div>
+            <div class="hero__metric-val">99.4%</div>
+            <div class="hero__metric-lbl">Kepuasan Klien</div>
+          </div>
+          <div>
+            <div class="hero__metric-val">48 Jam</div>
+            <div class="hero__metric-lbl">Draft Pertama</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       SKRIP THREE.JS & LOGIKA INTERAKSI 3D
+       Fungsi: Memuat Three.js dan merender objek geometris 3D yang berputar
+       serta merespons pergerakan kursor mouse dengan smooth lerp.
+       ========================================================================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Fungsi: Menginisialisasi Scene 3D pada Hero Canvas
+    (function initHero3D() {
+      const canvas = document.getElementById('hero-canvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const container = canvas.parentElement;
+      let width = container.clientWidth;
+      let height = container.clientHeight;
+
+      // 1. Inisialisasi Scene dan Kamera Perspektif
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      camera.position.set(0, 0, 7);
+
+      // 2. Inisialisasi Renderer WebGL dengan Antialiasing
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+      // 3. Pencahayaan (Lighting)
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+
+      const cyanLight = new THREE.PointLight(0x06b6d4, 3, 20);
+      cyanLight.position.set(-4, 3, 2);
+      scene.add(cyanLight);
+
+      const blueLight = new THREE.PointLight(0x3b82f6, 3, 20);
+      blueLight.position.set(4, -3, 3);
+      scene.add(blueLight);
+
+      // 4. Objek 3D Logo VisualGrid Media
+      const group = new THREE.Group();
+      scene.add(group);
+
+      // Monogram 3D "V"
+      const vShape = new THREE.Shape();
+      vShape.moveTo(-1.6, 1.35);
+      vShape.lineTo(-0.7, 1.35);
+      vShape.lineTo(0, -0.28);
+      vShape.lineTo(0.7, 1.35);
+      vShape.lineTo(1.6, 1.35);
+      vShape.lineTo(0.35, -1.6);
+      vShape.lineTo(-0.35, -1.6);
+      vShape.closePath();
+
+      const vGeo = new THREE.ExtrudeGeometry(vShape, { steps: 1, depth: 0.38, bevelEnabled: true, bevelThickness: 0.09, bevelSize: 0.07, bevelSegments: 3 });
+      vGeo.center();
+      const vMat = new THREE.MeshStandardMaterial({ color: 0x0c1628, metalness: 0.92, roughness: 0.18, emissive: 0x06152d, emissiveIntensity: 0.5 });
+      const vMesh = new THREE.Mesh(vGeo, vMat);
+      group.add(vMesh);
+
+      // Garis Neon Edges
+      const edgeGeo = new THREE.EdgesGeometry(vGeo, 24);
+      const edgeLines = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: 0x00f2fe, transparent: true, opacity: 0.85 }));
+      vMesh.add(edgeLines);
+
+      // Inti Sensor Optik Prisma
+      const prismMesh = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.45, 0),
+        new THREE.MeshStandardMaterial({ color: 0x06b6d4, emissive: 0x2563eb, emissiveIntensity: 0.85, metalness: 0.85, roughness: 0.12, flatShading: true })
+      );
+      prismMesh.position.set(0, 0.42, 0.08);
+      group.add(prismMesh);
+
+      // Cincin Orbit Sinematik
+      const ringGeo = new THREE.TorusGeometry(2.5, 0.02, 16, 80);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.55 });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.x = Math.PI / 3;
+      group.add(ringMesh);
+
+      const ring2Geo = new THREE.TorusGeometry(2.8, 0.016, 16, 80);
+      const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, transparent: true, opacity: 0.35 });
+      const ring2Mesh = new THREE.Mesh(ring2Geo, ring2Mat);
+      ring2Mesh.rotation.y = Math.PI / 4;
+      group.add(ring2Mesh);
+
+      // Posisikan grup ke sisi kanan pada layar lebar
+      function adjustPosition() {
+        if (window.innerWidth >= 1024) {
+          group.position.set(1.8, 0, 0);
+          group.scale.set(1, 1, 1);
+        } else {
+          group.position.set(0, 0.3, -0.8);
+          group.scale.set(0.75, 0.75, 0.75);
+        }
+      }
+      adjustPosition();
+
+      // 5. Partikel Ambient
+      const count = 400;
+      const pos = new Float32Array(count * 3);
+      for (let i = 0; i < count * 3; i++) {
+        pos[i] = (Math.random() - 0.5) * 14;
+      }
+      const partGeo = new THREE.BufferGeometry();
+      partGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const partMat = new THREE.PointsMaterial({ color: 0x93c5fd, size: 0.035, transparent: true, opacity: 0.65 });
+      const particles = new THREE.Points(partGeo, partMat);
+      scene.add(particles);
+
+      // 6. Interaksi Drag Mouse/Touch & Auto-Rotate
+      let isDragging = false;
+      let prevX = 0, prevY = 0;
+      let velX = 0, velY = 0;
+      const autoRotateSpeed = 0.007;
+
+      container.style.cursor = 'grab';
+      container.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('a, button, input, textarea, select')) return;
+        isDragging = true;
+        prevX = e.clientX;
+        prevY = e.clientY;
+        velX = 0;
+        velY = 0;
+        container.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevX;
+        const dy = e.clientY - prevY;
+        prevX = e.clientX;
+        prevY = e.clientY;
+
+        velX = dx * 0.0055;
+        velY = dy * 0.0055;
+        group.rotation.y += velX;
+        group.rotation.x = Math.max(-0.75, Math.min(0.75, group.rotation.x + velY));
+      });
+
+      const endDrag = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        container.style.cursor = 'grab';
+      };
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+
+      window.addEventListener('resize', () => {
+        width = container.clientWidth;
+        height = container.clientHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        adjustPosition();
+      });
+
+      // 7. Animation Loop
+      function animate() {
+        requestAnimationFrame(animate);
+
+        if (isDragging) {
+          // Posisi dikontrol langsung saat drag
+        } else {
+          if (Math.abs(velX) > 0.0001) {
+            group.rotation.y += velX;
+            velX *= 0.94;
+          } else {
+            group.rotation.y += autoRotateSpeed; // Putar otomatis saat idle
+          }
+
+          if (Math.abs(velY) > 0.0001) {
+            group.rotation.x = Math.max(-0.75, Math.min(0.75, group.rotation.x + velY));
+            velY *= 0.94;
+          } else {
+            group.rotation.x += (0.02 - group.rotation.x) * 0.025;
+          }
+        }
+
+        prismMesh.rotation.y -= 0.015;
+        ringMesh.rotation.z += 0.008;
+        ring2Mesh.rotation.x -= 0.006;
+        particles.rotation.y += 0.0008;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+    })();
+  </script>
+</body>
+</html>
