@@ -148,6 +148,11 @@ ul, ol {
   position: relative;
 }
 
+/* Saat menu navigasi diklik, judul bagian tidak tertutup header sticky (72px) */
+section[id] {
+  scroll-margin-top: 72px;
+}
+
 @media (min-width: 768px) {
   .container {
     padding-left: var(--space-xl);
@@ -406,6 +411,33 @@ ul, ol {
 @media (min-width: 840px) {
   .hamburger {
     display: none;
+  }
+}
+
+/* Area tombol kanan header: CTA tidak boleh terlipat dua baris */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.header__cta {
+  padding: 9px 18px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+/* HP kecil: CTA header disembunyikan (tersedia di menu ☰ sebagai "Order via WhatsApp") */
+@media (max-width: 479px) {
+  .header__cta {
+    display: none;
+  }
+}
+
+@media (max-width: 359px) {
+  .brand {
+    font-size: 1rem;
   }
 }
 
@@ -897,6 +929,26 @@ ul, ol {
   }
 }
 
+/* HP: ruang slider lebih lega dan label sebelum/sesudah dipersingkat */
+@media (max-width: 639px) {
+  .case-study-box {
+    padding: var(--space-md);
+    gap: var(--space-xl);
+  }
+  .comparison-slider {
+    height: 320px;
+  }
+  .comparison-slider__layer {
+    padding: var(--space-lg) var(--space-md) 56px;
+  }
+  .comparison-badge {
+    font-size: 0.6875rem;
+  }
+  .comparison-badge__note {
+    display: none;
+  }
+}
+
 /* Before-After Slider Container */
 .comparison-slider {
   position: relative;
@@ -925,13 +977,31 @@ ul, ol {
   color: #94a3b8;
 }
 
+/* Layer 'After' tetap selebar penuh lalu dipotong (clip-path) sesuai posisi
+   slider (--pos), sehingga teks di dalamnya tidak ikut terlipat saat digeser. */
+.comparison-slider {
+  --pos: 50%; /* Nilai awal sebelum digeser slider */
+}
+
 .comparison-slider__layer--after {
   background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
   color: #ffffff;
-  width: 50%; /* Nilai awal sebelum digeser slider */
-  overflow: hidden;
-  border-right: 2px solid #ffffff;
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
   z-index: 2;
+}
+
+/* Garis pembatas putih di posisi slider */
+.comparison-slider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos);
+  width: 2px;
+  margin-left: -1px;
+  background: #ffffff;
+  z-index: 3;
+  pointer-events: none;
 }
 
 .comparison-badge {
@@ -954,6 +1024,11 @@ ul, ol {
   left: var(--space-md);
   background: var(--primary);
   color: white;
+}
+
+.comparison-badge,
+.comparison-badge__note {
+  white-space: nowrap;
 }
 
 .comparison-input {
@@ -1225,6 +1300,13 @@ ul, ol {
 .form-textarea {
   resize: vertical;
   min-height: 110px;
+}
+
+/* HP: minimal 16px agar Safari iPhone tidak memperbesar layar saat kolom diketuk */
+@media (max-width: 767px) {
+  .form-input, .form-select, .form-textarea {
+    font-size: 1rem;
+  }
 }
 
 .form-hint {

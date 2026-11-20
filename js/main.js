@@ -101,15 +101,15 @@ function applyPortfolioFilter(selectedCategory) {
    -------------------------------------------------------------------------- */
 function initBeforeAfterSlider() {
   const sliderInput = document.getElementById('comparison-range');
-  const afterLayer = document.getElementById('slider-after-layer');
+  const container = document.getElementById('before-after-container');
 
-  if (!sliderInput || !afterLayer) return;
+  if (!sliderInput || !container) return;
 
-  // Dengarkan event 'input' agar pergeseran terasa responsif tanpa jeda
+  // Dengarkan event 'input' agar pergeseran terasa responsif tanpa jeda.
+  // Posisi disimpan di variabel CSS --pos; CSS memotong layer 'After' (clip-path)
+  // dan memindahkan garis pembatas, jadi teks tidak terlipat di layar sempit.
   sliderInput.addEventListener('input', (e) => {
-    const sliderPos = e.target.value;
-    // Setel lebar layer depan sesuai persentase nilai slider
-    afterLayer.style.width = `${sliderPos}%`;
+    container.style.setProperty('--pos', `${e.target.value}%`);
   });
 }
 
