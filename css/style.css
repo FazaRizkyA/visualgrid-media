@@ -1061,30 +1061,60 @@ a.portfolio-card__media {
   }
 }
 
-/* Video perbandingan di bawah kotak studi kasus */
-.case-study-video {
-  margin: var(--space-2xl) 0 0;
-}
-
-.case-study-video__caption {
-  text-align: center;
-  margin-bottom: var(--space-lg);
-}
-
-.case-study-video__caption h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-top: var(--space-sm);
-}
-
-.case-study-video__player {
-  display: block;
+/* Gambar feed di dalam layer slider (sebelum / sesudah) */
+.comparison-slider__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
-  background: #000;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.comparison-badge {
+  z-index: 1;
+}
+
+/* Pegangan bulat di tengah garis pembatas, petunjuk bahwa slider bisa digeser */
+.comparison-handle {
+  position: absolute;
+  top: 50%;
+  left: var(--pos);
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.comparison-handle::before,
+.comparison-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  margin-top: -7px;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+
+.comparison-handle::before {
+  left: 9px;
+  border-right: 9px solid #0f172a;
+}
+
+.comparison-handle::after {
+  right: 9px;
+  border-left: 9px solid #0f172a;
+}
+
+/* Fokus keyboard pada input range yang tak terlihat */
+.comparison-slider:has(.comparison-input:focus-visible) .comparison-handle {
+  outline: 3px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 /* HP: ruang slider lebih lega dan label sebelum/sesudah dipersingkat */
@@ -1093,8 +1123,11 @@ a.portfolio-card__media {
     padding: var(--space-md);
     gap: var(--space-xl);
   }
-  .comparison-slider {
-    height: 320px;
+  /* Selektor lebih spesifik: aturan dasar .comparison-slider ada di bawah blok ini */
+  .case-study-box .comparison-slider {
+    /* Persegi agar grid 3x3 di gambar sebelum/sesudah terlihat utuh */
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
   .comparison-slider__layer {
     padding: var(--space-lg) var(--space-md) 56px;
