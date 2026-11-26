@@ -12,10 +12,13 @@
 | `js/config.js` | URL dan publishable key Supabase |
 | `js/api.js` | Membaca konten dari Supabase dan menyimpan pesanan |
 | `js/icons.js` | Ikon SVG yang bisa dipilih admin |
+| `js/portfolio-media.js` | Media bawaan tiap karya portofolio dan aturan pemilihan media (dipakai situs dan admin) |
+| `assets/portfolio/`, `assets/case-study/` | Gambar, video, dan PDF portofolio; gambar slider studi kasus |
 | `admin/` | Dasbor admin: pesanan, layanan, portofolio, paket harga, FAQ, pengaturan |
 | `components/` | Versi mandiri tiap komponen (hero, layanan, harga, FAQ, dll.) |
 | `supabase/schema.sql` | Tabel `vg_*`, Row Level Security, hak akses |
 | `supabase/seed.sql` | Data awal (sama dengan isi statis `index.html`) |
+| `supabase/add-portfolio-media.sql` | Migrasi kolom media portofolio untuk database lama |
 
 ## Admin dashboard / Dasbor admin
 
@@ -32,6 +35,7 @@
 
 1. **Buat proyek Supabase** di [supabase.com/dashboard](https://supabase.com/dashboard) (paket gratis cukup). Satu proyek boleh dipakai bersama situs lain karena semua tabel memakai awalan `vg_`.
 2. **SQL Editor → New query**: tempel isi `supabase/schema.sql`, klik **Run**. Lalu tempel isi `supabase/seed.sql`, klik **Run**.
+   Database yang dibuat sebelum ada fitur media portofolio: jalankan juga `supabase/add-portfolio-media.sql` sekali (aman diulang). Tanpa itu, isian media di admin tidak tersimpan dan tab Portofolio menampilkan peringatan.
 3. **Authentication → Users → Add user → Create new user**: isi email dan kata sandi admin, centang *Auto Confirm User*.
 4. Salin **User UID** user itu, lalu jalankan di SQL Editor:
    ```sql
@@ -47,6 +51,7 @@ Admin masuk di `https://<username>.github.io/<repo>/admin/`.
 
 1. Create a Supabase project (free tier is enough). It can be shared with other sites, since every table uses the `vg_` prefix.
 2. In **SQL Editor**, run `supabase/schema.sql`, then `supabase/seed.sql`.
+   Databases created before portfolio media existed: also run `supabase/add-portfolio-media.sql` once (safe to re-run). Until then, media fields in the admin are not saved and the Portfolio tab shows a warning.
 3. **Authentication → Users → Add user**: create the admin account with *Auto Confirm User* checked.
 4. Copy its **User UID** and run `insert into public.admins (user_id) values ('<uid>');`.
 5. Disable **Allow new users to sign up** under Authentication → Sign In / Providers → Email.
