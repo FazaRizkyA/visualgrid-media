@@ -104,38 +104,11 @@ function applyPortfolioFilter(selectedCategory) {
    "kurangi gerakan" di perangkatnya.
    -------------------------------------------------------------------------- */
 
-// Media bawaan per id karya (id sama dengan supabase/seed.sql). Dipakai bila
-// kolom media_url di Supabase kosong atau belum ada.
-const PORTFOLIO_MEDIA = {
-  'pf-apparel': { type: 'image', src: 'assets/portfolio/apparel-minimalis-feed.jpg' },
-  'pf-coffee': { type: 'video', src: 'assets/portfolio/coffee-reels.mp4', poster: 'assets/portfolio/coffee-reels-poster.jpg' },
-  'pf-serum': { type: 'video', src: 'assets/portfolio/serum-botanik-ad.mp4', poster: 'assets/portfolio/serum-botanik-ad-poster.jpg' },
-  'pf-meetup': { type: 'video', src: 'assets/portfolio/tech-meetup-aftermovie.mp4', poster: 'assets/portfolio/tech-meetup-aftermovie-poster.jpg' },
-  'pf-clinic': { type: 'image', src: 'assets/portfolio/klinik-story-kit.jpg' },
-  'pf-cv': { type: 'pdf', src: 'assets/portfolio/cv-senior-product-manager.pdf', poster: 'assets/portfolio/cv-senior-pm-thumb.jpg' }
-};
-const MEDIA_TYPES = ['image', 'video', 'pdf'];
-
-// Hanya izinkan URL https atau file di folder assets/ (mencegah javascript: dll.)
-function safeMediaUrl(url) {
-  const u = String(url || '').trim();
-  return /^(https:\/\/|assets\/)/i.test(u) ? u : '';
-}
-
-function guessMediaType(url) {
-  if (/\.(mp4|webm|mov)(\?|#|$)/i.test(url)) return 'video';
-  if (/\.pdf(\?|#|$)/i.test(url)) return 'pdf';
-  return 'image';
-}
-
-function portfolioMedia(p) {
-  const src = safeMediaUrl(p.media_url);
-  if (src) {
-    const type = MEDIA_TYPES.includes(p.media_type) ? p.media_type : guessMediaType(src);
-    return { type, src, poster: safeMediaUrl(p.media_poster) };
-  }
-  return PORTFOLIO_MEDIA[p.id] || null;
-}
+// Daftar media bawaan & aturan pemilihan ada di js/portfolio-media.js
+// (dipakai bersama halaman admin agar pratinjaunya sama dengan situs).
+const MEDIA = window.VISUALGRID_MEDIA;
+const safeMediaUrl = (url) => (MEDIA ? MEDIA.safeUrl(url) : '');
+const portfolioMedia = (p) => (MEDIA ? MEDIA.resolve(p) : null);
 
 function portfolioMediaHtml(p, m) {
   const title = esc(p.title);

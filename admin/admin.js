@@ -62,6 +62,24 @@
   const SORT = { key: "sort", label: "Urutan", type: "number", hint: "Angka kecil tampil lebih dulu." };
   const PUBLISHED = { key: "published", label: "Tampilkan di situs", type: "checkbox" };
 
+  /* ---------- Media portofolio (js/portfolio-media.js, sama dengan situs) ---------- */
+  const MEDIA = window.VISUALGRID_MEDIA || null;
+  const MEDIA_LABELS = { image: "Gambar", video: "Video", pdf: "PDF" };
+  // Path assets/... relatif ke root situs; admin ada di /admin/ jadi perlu "../"
+  const siteUrl = (p) => (/^https:\/\//i.test(p) ? p : "../" + p);
+
+  // Thumbnail kecil untuk daftar karya
+  function mediaThumb(m) {
+    const thumb = m.type === "image" ? m.src : m.poster;
+    const inner = thumb
+      ? `<img src="${esc(siteUrl(thumb))}" alt="" loading="lazy" />`
+      : `<span class="preview__glyph">${m.type === "video" ? "▶" : "PDF"}</span>`;
+    return `<div class="preview preview--media">${inner}<span class="preview__kind">${esc(MEDIA_LABELS[m.type])}</span></div>`;
+  }
+
+  // Kolom opsional yang belum ada di database, per tabel (diisi saat tabel dimuat)
+  const missingColumns = {};
+
   const iconSvg = (key, size, stroke, width) => {
     const icon = ICONS[key] || ICONS.image;
     return icon
@@ -112,12 +130,13 @@
         { key: "color", label: "Warna ikon", type: "select", options: COLORS },
         { key: "media_type", label: "Jenis media", type: "select", options: MEDIA_TYPES, optionalColumn: true },
         {
-          key: "media_url", label: "File media (gambar / video / PDF)", type: "text", optionalColumn: true,
+          key: "media_url", label: "File media (gambar / video / PDF)", type: "text", optionalColumn: true, suggest: true,
           hint: "https://… atau path di repo, contoh assets/portfolio/karya.jpg. Kosongkan untuk memakai media bawaan / ikon."
         },
         {
-          key: "media_poster", label: "Gambar sampul (untuk video / PDF)", type: "text", optionalColumn: true,
-          hint: "Opsional. Contoh assets/portfolio/karya-poster.jpg"
+          key: "media_poster", label: "Gambar sampul (untuk video / PDF)", type: "text", optionalColumn: true, suggest: true,
+          hint: "Opsional. Contoh assets/portfolio/karya-poster.jpg",
+          previewAfter: true
         },
         SORT,
         PUBLISHED
@@ -130,11 +149,21 @@
         icon: "image",
         color: "#38bdf8"
       },
-      summary: (r) => ({
-        title: r.title,
-        meta: [PORTFOLIO_CATS[r.category] || r.category, r.tag, r.metric],
-        preview: `<div class="preview" style="background:${esc(r.bg)}">${iconSvg(r.icon, 28, r.color, 1.5)}</div>`
-      })
+      summary: (r) => {
+        const m = MEDIA ? MEDIA.resolve(r) : null;
+        return {
+          title: r.title,
+          meta: [
+            PORTFOLIO_CATS[r.category] || r.category,
+            r.tag,
+            m ? `${MEDIA_LABELS[m.type]} · ${m.source === "custom" ? "media kustom" : "media bawaan"}` : "Tanpa media (ikon)",
+            r.metric
+          ],
+          preview: m
+            ? mediaThumb(m)
+            : `<div class="preview" style="background:${esc(r.bg)}">${iconSvg(r.icon, 28, r.color, 1.5)}</div>`
+        };
+      }
     },
     vg_pricing: {
       title: "Paket Harga",
@@ -481,6 +510,17 @@
       return;
     }
     rowsCache = data;
+    // Deteksi kolom opsional yang belum dibuat (migrasi belum dijalankan)
+    const optionalKeys = def.fields.filter((f) => f.optionalColumn).map((f) => f.key);
+    missingColumns[table] = data.length > 0 && optionalKeys.some((k) => !(k in data[0]));
+    if (missingColumns[table]) {
+      list.insertAdjacentHTML(
+        "beforebegin",
+        `<p class="notice">Kolom media belum ada di database. Karya bawaan tetap tampil dengan media bawaannya,
+        tapi isian “File media” di form belum bisa disimpan. Jalankan <code>supabase/add-portfolio-media.sql</code>
+        sekali di Supabase → SQL Editor.</p>`
+      );
+    }
     if (!data.length) {
       list.innerHTML = `<p class="empty">Belum ada ${esc(def.noun)}. Klik “Tambah ${esc(def.noun)}”.</p>`;
       return;
@@ -558,8 +598,14 @@
       }
       case "number":
         return `<label class="field"><span>${esc(f.label)}</span><input type="number" id="${id}" min="0" step="1" value="${esc(value)}" ${req} />${hint}</label>`;
-      default:
-        return `<label class="field"><span>${esc(f.label)}</span><input type="text" id="${id}" value="${esc(value)}" ${req} />${hint}</label>`;
+      default: {
+        // Saran isian: daftar file media bawaan di repo
+        const files = f.suggest && MEDIA ? MEDIA.files() : [];
+        const list = files.length
+          ? `<datalist id="dl-${f.key}">${files.map((p) => `<option value="${esc(p)}"></option>`).join("")}</datalist>`
+          : "";
+        return `<label class="field"><span>${esc(f.label)}</span><input type="text" id="${id}" value="${esc(value)}" ${files.length ? `list="dl-${f.key}"` : ""} ${req} />${list}${hint}</label>`;
+      }
     }
   }
 
@@ -584,18 +630,68 @@
     const defaults = { published: true, sort: nextSort, ...(def.defaults || {}) };
     $("editTitle").textContent = row ? `Edit ${def.noun}` : `Tambah ${def.noun}`;
     $("editFields").innerHTML = def.fields
-      .map((f) => fieldHtml(f, row ? row[f.key] : defaults[f.key]))
+      .map((f) => fieldHtml(f, row ? row[f.key] : defaults[f.key]) +
+        (f.previewAfter ? '<div class="media-preview" id="mediaPreview" aria-live="polite"></div>' : ""))
       .join("");
+    if ($("mediaPreview")) {
+      ["media_type", "media_url", "media_poster"].forEach((k) => {
+        const el = $(`f-${k}`);
+        if (el) el.addEventListener("input", () => updateMediaPreview(table, row));
+      });
+      updateMediaPreview(table, row);
+    }
     showError($("editError"), "");
     dialog.showModal();
     const first = $("editFields").querySelector("input, textarea, select");
     if (first) first.focus();
   }
 
+  // Pratinjau media di form edit portofolio, diperbarui setiap isian berubah
+  function updateMediaPreview(table, row) {
+    const box = $("mediaPreview");
+    if (!box || !MEDIA) return;
+    const val = (k) => ($(`f-${k}`) ? $(`f-${k}`).value.trim() : "");
+    const notice = missingColumns[table]
+      ? `<p class="notice">Kolom media belum ada di database, jadi isian media di atas <b>belum tersimpan</b>. Jalankan <code>supabase/add-portfolio-media.sql</code> di Supabase → SQL Editor.</p>`
+      : "";
+    const rawUrl = val("media_url");
+    const rawPoster = val("media_poster");
+    if ((rawUrl && !MEDIA.safeUrl(rawUrl)) || (rawPoster && !MEDIA.safeUrl(rawPoster))) {
+      box.innerHTML = notice + '<p class="error">Alamat file harus diawali <code>https://</code> atau <code>assets/</code>.</p>';
+      return;
+    }
+    const m = MEDIA.resolve({ id: row ? row.id : "", media_type: val("media_type"), media_url: rawUrl, media_poster: rawPoster });
+    if (!m) {
+      box.innerHTML = notice + '<p class="muted small">Tanpa media: kartu di situs memakai ikon dan warna latar di atas.</p>';
+      return;
+    }
+    const src = esc(siteUrl(m.src));
+    const poster = m.poster ? esc(siteUrl(m.poster)) : "";
+    let frame;
+    if (m.type === "video") {
+      frame = `<video src="${src}" ${poster ? `poster="${poster}"` : ""} muted loop autoplay playsinline controls></video>`;
+    } else if (m.type === "pdf") {
+      frame = poster ? `<img src="${poster}" alt="Sampul PDF" />` : '<span class="preview__glyph">PDF</span>';
+    } else {
+      frame = `<img src="${src}" alt="Pratinjau gambar" />`;
+    }
+    const source = m.source === "custom" ? "dari isian di atas" : "media bawaan karya ini (isian media kosong)";
+    box.innerHTML = `${notice}
+      <div class="media-preview__frame">${frame}</div>
+      <p class="muted small">Pratinjau: ${esc(MEDIA_LABELS[m.type])} · ${source}
+        · <a href="${src}" target="_blank" rel="noopener">Buka file ↗</a></p>`;
+  }
+
   function closeEditor() {
     dialog.close();
-    editing = null;
   }
+
+  // Esc atau tombol tutup: kosongkan pratinjau agar video berhenti
+  dialog.addEventListener("close", () => {
+    const box = $("mediaPreview");
+    if (box) box.innerHTML = "";
+    editing = null;
+  });
 
   $("editClose").addEventListener("click", closeEditor);
   $("editCancel").addEventListener("click", closeEditor);
