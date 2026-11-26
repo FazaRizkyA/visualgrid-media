@@ -47,6 +47,26 @@
 
 Admin masuk di `https://<username>.github.io/<repo>/admin/`.
 
+### Menambah / mencabut admin
+
+1. **Authentication → Users → Add user → Create new user**: isi email dan kata sandi, centang *Auto Confirm User*.
+2. **SQL Editor**, ganti emailnya lalu **Run** (hasil "1 row" berarti berhasil):
+   ```sql
+   insert into public.admins (user_id)
+   select id from auth.users where email = 'emailadmin@contoh.com'
+   on conflict do nothing;
+   ```
+3. Admin login di `/admin/` dengan email dan kata sandi tadi.
+
+Lihat semua admin:
+```sql
+select u.email, a.user_id from public.admins a join auth.users u on u.id = a.user_id;
+```
+Cabut akses admin (akunnya tetap ada):
+```sql
+delete from public.admins where user_id = (select id from auth.users where email = 'emailadmin@contoh.com');
+```
+
 ## Setup (English)
 
 1. Create a Supabase project (free tier is enough). It can be shared with other sites, since every table uses the `vg_` prefix.
