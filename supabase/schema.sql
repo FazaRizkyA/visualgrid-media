@@ -75,6 +75,13 @@ create table if not exists public.vg_portfolio (
   updated_at timestamptz not null default now()
 );
 
+-- Media karya (opsional). Kosong = situs memakai media bawaan per id di js/main.js,
+-- atau ikon bila id tidak dikenal. Lihat juga supabase/add-portfolio-media.sql.
+alter table public.vg_portfolio add column if not exists media_type text not null default ''
+  check (media_type in ('', 'image', 'video', 'pdf'));
+alter table public.vg_portfolio add column if not exists media_url text not null default '';
+alter table public.vg_portfolio add column if not exists media_poster text not null default '';
+
 create table if not exists public.vg_pricing (
   id text primary key,
   sort int not null default 0,

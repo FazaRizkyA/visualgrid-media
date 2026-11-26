@@ -19,6 +19,7 @@ let ADMIN_PHONE_NUMBER = '62895397081621';
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
   initPortfolioFilter();
+  initPortfolioMedia();
   initBeforeAfterSlider();
   initFaqAccordion();
   initContactForm();
@@ -93,6 +94,148 @@ function applyPortfolioFilter(selectedCategory) {
       card.style.display = 'none';
     }
   });
+}
+
+/* --------------------------------------------------------------------------
+   2b. MEDIA PORTOFOLIO (GAMBAR, VIDEO, FILE PDF) + LIGHTBOX
+   Fungsi: Klik gambar/video karya untuk melihatnya besar di lightbox; file CV
+   (PDF) dibuka di tab baru. Video pratinjau di kartu diputar tanpa suara hanya
+   saat terlihat di layar, dan tidak diputar otomatis bila pengunjung memilih
+   "kurangi gerakan" di perangkatnya.
+   -------------------------------------------------------------------------- */
+
+// Media bawaan per id karya (id sama dengan supabase/seed.sql). Dipakai bila
+// kolom media_url di Supabase kosong atau belum ada.
+const PORTFOLIO_MEDIA = {
+  'pf-apparel': { type: 'image', src: 'assets/portfolio/apparel-minimalis-feed.jpg' },
+  'pf-coffee': { type: 'video', src: 'assets/portfolio/coffee-reels.mp4', poster: 'assets/portfolio/coffee-reels-poster.jpg' },
+  'pf-serum': { type: 'video', src: 'assets/portfolio/serum-botanik-ad.mp4', poster: 'assets/portfolio/serum-botanik-ad-poster.jpg' },
+  'pf-meetup': { type: 'video', src: 'assets/portfolio/tech-meetup-aftermovie.mp4', poster: 'assets/portfolio/tech-meetup-aftermovie-poster.jpg' },
+  'pf-clinic': { type: 'image', src: 'assets/portfolio/klinik-story-kit.jpg' },
+  'pf-cv': { type: 'pdf', src: 'assets/portfolio/cv-senior-product-manager.pdf', poster: 'assets/portfolio/cv-senior-pm-thumb.jpg' }
+};
+const MEDIA_TYPES = ['image', 'video', 'pdf'];
+
+// Hanya izinkan URL https atau file di folder assets/ (mencegah javascript: dll.)
+function safeMediaUrl(url) {
+  const u = String(url || '').trim();
+  return /^(https:\/\/|assets\/)/i.test(u) ? u : '';
+}
+
+function guessMediaType(url) {
+  if (/\.(mp4|webm|mov)(\?|#|$)/i.test(url)) return 'video';
+  if (/\.pdf(\?|#|$)/i.test(url)) return 'pdf';
+  return 'image';
+}
+
+function portfolioMedia(p) {
+  const src = safeMediaUrl(p.media_url);
+  if (src) {
+    const type = MEDIA_TYPES.includes(p.media_type) ? p.media_type : guessMediaType(src);
+    return { type, src, poster: safeMediaUrl(p.media_poster) };
+  }
+  return PORTFOLIO_MEDIA[p.id] || null;
+}
+
+function portfolioMediaHtml(p, m) {
+  const title = esc(p.title);
+  const src = esc(m.src);
+  const poster = m.poster ? esc(m.poster) : '';
+  if (m.type === 'pdf') {
+    return `
+        <a class="portfolio-card__media" href="${src}" target="_blank" rel="noopener" aria-label="Buka file (PDF): ${title}">
+          ${poster ? `<img src="${poster}" alt="Pratinjau ${title}" width="1280" height="720" loading="lazy" decoding="async">` : '<span class="portfolio-card__pdf">PDF</span>'}
+          <span class="portfolio-card__kind">Buka PDF</span>
+        </a>`;
+  }
+  if (m.type === 'video') {
+    return `
+        <button type="button" class="portfolio-card__media" data-media-type="video" data-media-src="${src}" data-media-poster="${poster}" aria-label="Putar video: ${title}">
+          <video src="${src}" ${poster ? `poster="${poster}"` : ''} muted loop playsinline preload="${poster ? 'none' : 'metadata'}" aria-hidden="true"></video>
+          <span class="portfolio-card__kind">&#9654; Putar Video</span>
+        </button>`;
+  }
+  return `
+        <button type="button" class="portfolio-card__media" data-media-type="image" data-media-src="${src}" aria-label="Lihat karya: ${title}">
+          <img src="${src}" alt="${title}" width="1280" height="720" loading="lazy" decoding="async">
+          <span class="portfolio-card__kind">Lihat Gambar</span>
+        </button>`;
+}
+
+function initPortfolioMedia() {
+  const grid = document.querySelector('.portfolio-grid');
+  const box = document.getElementById('media-lightbox');
+  const body = document.getElementById('media-lightbox-body');
+  const caption = document.getElementById('media-lightbox-caption');
+  const closeBtn = document.getElementById('media-lightbox-close');
+  if (!grid) return;
+
+  grid.addEventListener('click', (e) => {
+    const btn = e.target.closest('button.portfolio-card__media');
+    if (!btn) return;
+    const type = btn.getAttribute('data-media-type');
+    const src = safeMediaUrl(btn.getAttribute('data-media-src'));
+    if (!src) return;
+
+    // Browser lama tanpa <dialog>: buka file langsung di tab baru
+    if (!box || typeof box.showModal !== 'function') {
+      window.open(src, '_blank', 'noopener');
+      return;
+    }
+
+    const title = btn.closest('.portfolio-card')?.querySelector('.portfolio-card__title')?.textContent || '';
+    body.textContent = '';
+    let el;
+    if (type === 'video') {
+      el = document.createElement('video');
+      el.controls = true;
+      el.autoplay = true;
+      el.loop = true;
+      el.playsInline = true;
+      const poster = safeMediaUrl(btn.getAttribute('data-media-poster'));
+      if (poster) el.poster = poster;
+    } else {
+      el = document.createElement('img');
+      el.alt = title;
+    }
+    el.src = src;
+    body.appendChild(el);
+    caption.textContent = title;
+    box.showModal();
+  });
+
+  if (box) {
+    // Kosongkan isi saat ditutup agar video berhenti dan tidak terus diunduh
+    box.addEventListener('close', () => { body.textContent = ''; });
+    // Klik di luar media (area latar dialog) menutup lightbox
+    box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
+    if (closeBtn) closeBtn.addEventListener('click', () => box.close());
+  }
+
+  observePortfolioVideos();
+}
+
+// Putar video pratinjau hanya saat kartu terlihat; jeda saat keluar layar/terfilter.
+let portfolioVideoObserver = null;
+function observePortfolioVideos() {
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+  if (!portfolioVideoObserver) {
+    portfolioVideoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const video = entry.target;
+        if (entry.isIntersecting) {
+          video.preload = 'auto';
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.35 });
+  }
+  portfolioVideoObserver.disconnect();
+  document.querySelectorAll('.portfolio-card__media video').forEach(v => portfolioVideoObserver.observe(v));
 }
 
 /* --------------------------------------------------------------------------
@@ -349,13 +492,16 @@ function renderPortfolio(items) {
   const grid = document.querySelector('.portfolio-grid');
   if (!grid) return;
 
-  grid.innerHTML = items.map(p => `
-    <article class="portfolio-card" data-category="${esc(p.category)}">
+  grid.innerHTML = items.map(p => {
+    const media = portfolioMedia(p);
+    return `
+    <article class="portfolio-card" data-category="${esc(p.category)}" data-id="${esc(p.id)}">
       <div class="portfolio-card__thumb">
         ${p.tag ? `<span class="portfolio-card__tag">${esc(p.tag)}</span>` : ''}
+        ${media ? portfolioMediaHtml(p, media) : `
         <div class="portfolio-card__visual" style="background: ${esc(p.bg)};">
           ${iconSvg(p.icon, 64, p.color, 1.5)}
-        </div>
+        </div>`}
       </div>
       <div class="portfolio-card__meta">
         <h3 class="portfolio-card__title">${esc(p.title)}</h3>
@@ -366,7 +512,10 @@ function renderPortfolio(items) {
           <span>${esc(p.metric)}</span>
         </div>` : ''}
       </div>
-    </article>`).join('');
+    </article>`;
+  }).join('');
+
+  observePortfolioVideos();
 
   // Terapkan ulang filter yang sedang aktif
   const active = document.querySelector('.portfolio-filter-btn.active');

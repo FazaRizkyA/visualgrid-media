@@ -40,6 +40,7 @@
     cv: "CV & Dokumen"
   };
   const METRIC_ICONS = { trend: "Grafik naik", check: "Centang" };
+  const MEDIA_TYPES = { "": "Otomatis (dari ekstensi file)", image: "Gambar", video: "Video", pdf: "File PDF" };
   const BACKGROUNDS = {
     "radial-gradient(circle at center, #1e293b 0%, #0f172a 100%)": "Slate gelap",
     "radial-gradient(circle at center, #1e3a5f 0%, #0c1524 100%)": "Biru laut",
@@ -109,10 +110,20 @@
         { key: "bg", label: "Warna latar kartu", type: "select", options: BACKGROUNDS },
         { key: "icon", label: "Ikon kartu", type: "select", options: ICON_OPTIONS },
         { key: "color", label: "Warna ikon", type: "select", options: COLORS },
+        { key: "media_type", label: "Jenis media", type: "select", options: MEDIA_TYPES, optionalColumn: true },
+        {
+          key: "media_url", label: "File media (gambar / video / PDF)", type: "text", optionalColumn: true,
+          hint: "https://… atau path di repo, contoh assets/portfolio/karya.jpg. Kosongkan untuk memakai media bawaan / ikon."
+        },
+        {
+          key: "media_poster", label: "Gambar sampul (untuk video / PDF)", type: "text", optionalColumn: true,
+          hint: "Opsional. Contoh assets/portfolio/karya-poster.jpg"
+        },
         SORT,
         PUBLISHED
       ],
       defaults: {
+        media_type: "",
         category: "instagram",
         metric_icon: "trend",
         bg: Object.keys(BACKGROUNDS)[0],
@@ -610,18 +621,29 @@
 
     const saveBtn = $("editSave");
     saveBtn.disabled = true;
-    let result;
-    if (row) {
-      result = await sb.from(table).update(values).eq("id", row.id);
-    } else {
-      if (def.idPrefix) values.id = `${def.idPrefix}-${Date.now().toString(36)}`;
-      result = await sb.from(table).insert(values);
+    if (!row && def.idPrefix) values.id = `${def.idPrefix}-${Date.now().toString(36)}`;
+    const write = (v) => (row ? sb.from(table).update(v).eq("id", row.id) : sb.from(table).insert(v));
+    let result = await write(values);
+
+    // Kolom opsional (mis. media portofolio) belum ada di database lama:
+    // simpan tanpa kolom itu, lalu beri tahu admin untuk menjalankan migrasi.
+    const optionalKeys = def.fields.filter((f) => f.optionalColumn).map((f) => f.key);
+    let skippedOptional = false;
+    if (result.error && result.error.code === "PGRST204" && optionalKeys.length) {
+      const reduced = { ...values };
+      optionalKeys.forEach((k) => delete reduced[k]);
+      result = await write(reduced);
+      skippedOptional = !result.error;
     }
     saveBtn.disabled = false;
     if (result.error) return showError($("editError"), friendlyError(result.error));
 
     closeEditor();
-    toast("Tersimpan. Perubahan langsung tampil di situs.");
+    toast(
+      skippedOptional
+        ? "Tersimpan, tapi kolom media belum ada di database. Jalankan supabase/add-portfolio-media.sql."
+        : "Tersimpan. Perubahan langsung tampil di situs."
+    );
     renderTable(table);
   });
 

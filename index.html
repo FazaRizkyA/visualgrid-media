@@ -466,17 +466,14 @@
         <!-- Grid Karya Portofolio -->
         <div class="portfolio-grid">
           <!-- Item 1: Instagram Feed Fashion -->
-          <article class="portfolio-card" data-category="instagram">
+          <article class="portfolio-card" data-category="instagram" data-id="pf-apparel">
             <div class="portfolio-card__thumb">
               <span class="portfolio-card__tag">Instagram Feed</span>
-              <!-- Ilustrasi Mockup Desain Vektor Bergaya Modern -->
-              <div class="portfolio-card__visual" style="background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                  <polyline points="21 15 16 10 5 21"></polyline>
-                </svg>
-              </div>
+              <!-- Media karya: klik untuk melihat ukuran penuh (lightbox) -->
+              <button type="button" class="portfolio-card__media" data-media-type="image" data-media-src="assets/portfolio/apparel-minimalis-feed.jpg" aria-label="Lihat karya: Rebranding Grid Feed Apparel Minimalis">
+                <img src="assets/portfolio/apparel-minimalis-feed.jpg" alt="Mockup 9 grid feed Instagram monokrom brand apparel minimalis" width="1280" height="720" loading="lazy" decoding="async">
+                <span class="portfolio-card__kind">Lihat Gambar</span>
+              </button>
             </div>
             <div class="portfolio-card__meta">
               <h3 class="portfolio-card__title">Rebranding Grid Feed: Apparel Minimalis</h3>
@@ -489,14 +486,13 @@
           </article>
 
           <!-- Item 2: Reels Sinematik Cafe -->
-          <article class="portfolio-card" data-category="video">
+          <article class="portfolio-card" data-category="video" data-id="pf-coffee">
             <div class="portfolio-card__thumb">
               <span class="portfolio-card__tag">Reels Sinematik</span>
-              <div class="portfolio-card__visual" style="background: radial-gradient(circle at center, #1e3a5f 0%, #0c1524 100%);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.5">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-              </div>
+              <button type="button" class="portfolio-card__media" data-media-type="video" data-media-src="assets/portfolio/coffee-reels.mp4" data-media-poster="assets/portfolio/coffee-reels-poster.jpg" aria-label="Putar video: Cinematic Coffee Brewing Artisan Roastery">
+                <video src="assets/portfolio/coffee-reels.mp4" poster="assets/portfolio/coffee-reels-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+                <span class="portfolio-card__kind">&#9654; Putar Video</span>
+              </button>
             </div>
             <div class="portfolio-card__meta">
               <h3 class="portfolio-card__title">Cinematic Coffee Brewing: Artisan Roastery</h3>
@@ -509,15 +505,13 @@
           </article>
 
           <!-- Item 3: Video Iklan Produk Skincare -->
-          <article class="portfolio-card" data-category="video">
+          <article class="portfolio-card" data-category="video" data-id="pf-serum">
             <div class="portfolio-card__thumb">
               <span class="portfolio-card__tag">Commercial Ads</span>
-              <div class="portfolio-card__visual" style="background: radial-gradient(circle at center, #312e81 0%, #09090b 100%);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                </svg>
-              </div>
+              <button type="button" class="portfolio-card__media" data-media-type="video" data-media-src="assets/portfolio/serum-botanik-ad.mp4" data-media-poster="assets/portfolio/serum-botanik-ad-poster.jpg" aria-label="Putar video: Direct Response Ad Serum Botanik Alami">
+                <video src="assets/portfolio/serum-botanik-ad.mp4" poster="assets/portfolio/serum-botanik-ad-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+                <span class="portfolio-card__kind">&#9654; Putar Video</span>
+              </button>
             </div>
             <div class="portfolio-card__meta">
               <h3 class="portfolio-card__title">Direct Response Ad: Serum Botanik Alami</h3>
@@ -530,15 +524,13 @@
           </article>
 
           <!-- Item 4: Aftermovie Event Tech Summit -->
-          <article class="portfolio-card" data-category="event">
+          <article class="portfolio-card" data-category="event" data-id="pf-meetup">
             <div class="portfolio-card__thumb">
               <span class="portfolio-card__tag">Event Aftermovie</span>
-              <div class="portfolio-card__visual" style="background: radial-gradient(circle at center, #14532d 0%, #052e16 100%);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.5">
-                  <path d="M23 7l-7 5 7 5V7z"></path>
-                  <rect x="1" y="5" width="15" height="14" rx="2"></rect>
-                </svg>
-              </div>
+              <button type="button" class="portfolio-card__media" data-media-type="video" data-media-src="assets/portfolio/tech-meetup-aftermovie.mp4" data-media-poster="assets/portfolio/tech-meetup-aftermovie-poster.jpg" aria-label="Putar video: Aftermovie Jakarta Tech Founders Meetup 2026">
+                <video src="assets/portfolio/tech-meetup-aftermovie.mp4" poster="assets/portfolio/tech-meetup-aftermovie-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+                <span class="portfolio-card__kind">&#9654; Putar Video</span>
+              </button>
             </div>
             <div class="portfolio-card__meta">
               <h3 class="portfolio-card__title">Aftermovie: Jakarta Tech Founders Meetup 2026</h3>
@@ -551,15 +543,13 @@
           </article>
 
           <!-- Item 5: Template Stories & Highlight -->
-          <article class="portfolio-card" data-category="instagram">
+          <article class="portfolio-card" data-category="instagram" data-id="pf-clinic">
             <div class="portfolio-card__thumb">
               <span class="portfolio-card__tag">Story & Highlight</span>
-              <div class="portfolio-card__visual" style="background: radial-gradient(circle at center, #701a75 0%, #1e1b4b 100%);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.5">
-                  <rect x="5" y="2" width="14" height="20" rx="2"></rect>
-                  <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                </svg>
-              </div>
+              <button type="button" class="portfolio-card__media" data-media-type="image" data-media-src="assets/portfolio/klinik-story-kit.jpg" aria-label="Lihat karya: Story Kit dan Highlight Klinik Kecantikan Premium">
+                <img src="assets/portfolio/klinik-story-kit.jpg" alt="Tiga template Instagram Story dan enam ikon highlight bernuansa emas mawar untuk klinik kecantikan" width="1280" height="720" loading="lazy" decoding="async">
+                <span class="portfolio-card__kind">Lihat Gambar</span>
+              </button>
             </div>
             <div class="portfolio-card__meta">
               <h3 class="portfolio-card__title">Story Kit & Highlight: Klinik Kecantikan Premium</h3>
@@ -572,15 +562,14 @@
           </article>
 
           <!-- Item 6: CV ATS Executive Design -->
-          <article class="portfolio-card" data-category="cv">
+          <article class="portfolio-card" data-category="cv" data-id="pf-cv">
             <div class="portfolio-card__thumb">
               <span class="portfolio-card__tag">Format CV ATS</span>
-              <div class="portfolio-card__visual" style="background: radial-gradient(circle at center, #374151 0%, #111827 100%);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-              </div>
+              <!-- File PDF dibuka di tab baru (viewer PDF bawaan browser) -->
+              <a class="portfolio-card__media" href="assets/portfolio/cv-senior-product-manager.pdf" target="_blank" rel="noopener" aria-label="Buka file CV (PDF): Executive CV Senior Product Manager">
+                <img src="assets/portfolio/cv-senior-pm-thumb.jpg" alt="Pratinjau CV 2 halaman dan surat lamaran Senior Product Manager" width="1280" height="720" loading="lazy" decoding="async">
+                <span class="portfolio-card__kind">Buka PDF</span>
+              </a>
             </div>
             <div class="portfolio-card__meta">
               <h3 class="portfolio-card__title">Executive CV & Portfolio: Senior Product Manager</h3>
@@ -670,6 +659,20 @@
             </blockquote>
           </div>
         </div>
+
+        <!-- Video perbandingan: feed amatir vs hasil studio (Verve & Thread) -->
+        <figure class="case-study-video">
+          <figcaption class="case-study-video__caption">
+            <span class="section-badge">Video Perbandingan</span>
+            <h3>Desain Amatir vs Sentuhan Studio dalam 25 Detik</h3>
+          </figcaption>
+          <video class="case-study-video__player" controls playsinline preload="none"
+                 poster="assets/case-study/studi-kasus-verve-thread-poster.jpg"
+                 aria-label="Video perbandingan feed Instagram Verve & Thread sebelum dan sesudah redesign">
+            <source src="assets/case-study/studi-kasus-verve-thread.mp4" type="video/mp4">
+            Browser Anda tidak mendukung video. <a href="assets/case-study/studi-kasus-verve-thread.mp4">Unduh videonya</a>.
+          </video>
+        </figure>
       </div>
     </section>
 
@@ -1037,6 +1040,17 @@
       </div>
     </div>
   </footer>
+
+  <!-- ==========================================================================
+       LIGHTBOX PORTOFOLIO
+       Fungsi: Menampilkan gambar/video karya dalam ukuran besar saat kartu diklik.
+       Isi diisi oleh js/main.js; tutup dengan tombol ×, klik latar, atau Esc.
+       ========================================================================== -->
+  <dialog class="media-lightbox" id="media-lightbox" aria-label="Pratinjau karya">
+    <button type="button" class="media-lightbox__close" id="media-lightbox-close" aria-label="Tutup pratinjau">&times;</button>
+    <div class="media-lightbox__body" id="media-lightbox-body"></div>
+    <p class="media-lightbox__caption" id="media-lightbox-caption"></p>
+  </dialog>
 
   <!-- ==========================================================================
        SCRIPTS / LOGIKA JAVASCRIPT
